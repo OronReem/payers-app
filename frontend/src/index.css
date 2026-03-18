@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pay-blue: #1e3a8a;
+  --color-pay-yellow: #d97706;
+  --color-pay-green: #065f46;
+  --color-pay-red: #991b1b;
+  --color-pay-purple: #5b21b6;
+  --color-pay-gray-light: #f0fdfa;
+  --color-pay-gray-dark: #022c22;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #e0f0ea;
+  color: var(--color-pay-gray-dark);
+}
