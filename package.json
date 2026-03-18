@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "build": "npm run build --prefix frontend && cp -r frontend/dist ./dist"
+  },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "dotenv": "^17.3.1"
