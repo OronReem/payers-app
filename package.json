@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "npm run build --prefix frontend && cp -r frontend/dist ./dist"
+    "build": "npm install --prefix frontend && npm run build --prefix frontend && cp -r frontend/dist ./dist"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
