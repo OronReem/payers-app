@@ -10,13 +10,7 @@ const Editor = () => {
   const { items, updateItem, setItems, addItem, imagePreview } = useBill();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Filter out 0 cost items automatically
-    const validItems = items.filter(item => item.price > 0);
-    if (validItems.length !== items.length) {
-      setItems(validItems);
-    }
-  }, [items, setItems]);
+  // Auto-delete removed to allow empty inputs during typing and creating new zero-price items
 
   const handlePriceChange = (id, val) => {
     const num = parseFloat(val);

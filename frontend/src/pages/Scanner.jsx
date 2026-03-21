@@ -5,10 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import HomeMenu from '../components/HomeMenu';
 import axios from 'axios';
 import { useBill } from '../context/BillContext';
+import { useAuth } from '../context/AuthContext';
 
 const Scanner = () => {
   const navigate = useNavigate();
   const { loadParsedItems, setImagePreview, resetSession } = useBill();
+  const { currentUser } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
 
@@ -106,8 +108,7 @@ const Scanner = () => {
             <div className="w-20 h-20 bg-[#a4c3b2] border border-black/20 rounded-full flex items-center justify-center">
               <Loader2 className="w-10 h-10 text-black animate-spin" />
             </div>
-            <h3 className="text-xl font-semibold text-black">Reading Magic...</h3>
-            <p className="text-sm text-black">Extracting items and prices via Gemini AI</p>
+            <h3 className="text-xl font-semibold text-black mt-2">AI is Scanning the receipt</h3>
           </div>
         ) : (
           <>
@@ -150,14 +151,16 @@ const Scanner = () => {
               </label>
             </div>
             
-            <div className="mt-10 pt-6 border-t border-gray-200 w-full flex justify-center">
-              <button 
-                onClick={() => navigate('/history')}
-                className="text-black font-bold text-sm flex items-center gap-1 hover:underline px-4 py-2 rounded-xl transition"
-              >
-                View Past Receipts
-              </button>
-            </div>
+            {currentUser && (
+              <div className="mt-10 pt-6 border-t border-gray-200 w-full flex justify-center">
+                <button 
+                  onClick={() => navigate('/history')}
+                  className="text-black font-bold text-sm flex items-center gap-1 hover:underline px-4 py-2 rounded-xl transition"
+                >
+                  View Past Receipts
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

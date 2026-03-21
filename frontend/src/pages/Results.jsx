@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useBill } from '../context/BillContext';
-import { Copy, PartyPopper, Camera, Home } from 'lucide-react';
+import { Copy, PartyPopper, Camera, Home, Pencil, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import HomeMenu from '../components/HomeMenu';
 import { useAuth } from '../context/AuthContext';
@@ -9,10 +9,12 @@ import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const Results = () => {
-  const { items, participants, globalTipPercent } = useBill();
+  const { items, participants, globalTipPercent, updateParticipant } = useBill();
   const navigate = useNavigate();
   const hasSaved = useRef(false);
   const { currentUser } = useAuth();
+  const [editingParticipantId, setEditingParticipantId] = useState(null);
+  const [editName, setEditName] = useState('');
 
   // Calculation Engine
   const calculateResults = () => {
@@ -91,6 +93,11 @@ const Results = () => {
     alert('Summary copied to clipboard!');
   };
 
+  const handleSaveName = (id) => {
+    updateParticipant(id, editName);
+    setEditingParticipantId(null);
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
@@ -108,10 +115,36 @@ const Results = () => {
       <div className="space-y-3 mb-8">
         {breakdowns.map(person => (
           <div key={person.id} className="bg-[#f0f7f4] rounded-xl p-3 shadow-sm border border-gray-100 overflow-hidden relative">
-            <div className={`absolute top-0 left-0 w-1.5 h-full bg-${person.color}`}></div>
+            <div className={`absolute top-0 left-0 w-1.5 h-full`} style={{backgroundColor: person.color}}></div>
             <div className="flex justify-between items-center mb-2 pl-2 border-b border-gray-100 pb-2">
-              <h3 className="font-bold text-lg text-black">{person.name}</h3>
-              <span className="text-lg font-black text-black">${person.grandTotal.toFixed(0)}</span>
+              <div className="flex-1">
+                {editingParticipantId === person.id ? (
+                  <div className="flex items-center gap-1">
+                    <input 
+                      type="text" 
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="text-sm font-bold text-black border-2 border-pay-gray-dark outline-none bg-white rounded px-2 w-full max-w-[150px]"
+                      autoFocus
+                      onKeyDown={(e) => { if (e.key === 'Enter') handleSaveName(person.id); }}
+                    />
+                    <button onClick={() => handleSaveName(person.id)} className="p-1 hover:bg-[#a4c3b2] rounded bg-[#cce3de] transition shadow-sm ml-1">
+                      <Check className="w-4 h-4 text-black" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 group">
+                    <h3 className="font-bold text-lg text-black">{person.name}</h3>
+                    <button 
+                      onClick={() => { setEditingParticipantId(person.id); setEditName(person.name); }}
+                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-[#a4c3b2] rounded transition flex items-center justify-center shrink-0"
+                    >
+                      <Pencil className="w-4 h-4 text-black" />
+                    </button>
+                  </div>
+                )}
+              </div>
+              <span className="text-lg font-black text-black ml-2">${person.grandTotal.toFixed(0)}</span>
             </div>
             
             <div className="space-y-1 pl-2">
