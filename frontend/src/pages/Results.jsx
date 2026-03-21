@@ -144,7 +144,7 @@ const Results = () => {
                   </div>
                 )}
               </div>
-              <span className="text-lg font-black text-black ml-2">${person.grandTotal.toFixed(0)}</span>
+              <span className="text-lg font-black text-black ml-2">{person.grandTotal.toFixed(0)}</span>
             </div>
             
             <div className="space-y-1 pl-2">

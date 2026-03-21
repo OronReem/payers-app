@@ -132,7 +132,7 @@ const PastReceipts = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="font-black text-xl text-black">${r.overallGrandTotal?.toFixed(0)}</span>
+                  <span className="font-black text-xl text-black">{r.overallGrandTotal?.toFixed(0)}</span>
                   <button onClick={() => handleDelete(r.id)} className="p-2 text-black hover:bg-black/10 rounded-lg transition">
                     <Trash2 className="w-5 h-5" />
                   </button>

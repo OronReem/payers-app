@@ -53,6 +53,14 @@ const Editor = () => {
       )}
 
       <div className="flex-1 p-4 space-y-3">
+        {items.length > 0 && (
+          <div className="flex px-4 pb-0 text-[10px] font-extrabold text-black uppercase tracking-widest opacity-60">
+            <div className="flex-1">Item Title</div>
+            <div className="w-20 text-center">Price</div>
+            <div className="w-12 text-center ml-2">Qty</div>
+            <div className="w-8 ml-2"></div>
+          </div>
+        )}
         <AnimatePresence>
           {items.map((item) => (
             <motion.div 
