@@ -79,14 +79,14 @@ const Editor = () => {
                 step="0.01"
                 value={item.price}
                 onChange={(e) => handlePriceChange(item.id, e.target.value)}
-                className="w-14 font-bold outline-none bg-[#cce3de] p-1 rounded text-black text-center"
+                className="w-20 font-bold outline-none bg-[#cce3de] p-1 rounded text-black text-center"
               />
               <input 
                 type="number" 
                 min="1"
                 value={item.qty}
                 onChange={(e) => handleQtyChange(item.id, e.target.value)}
-                className="w-10 font-bold outline-none bg-[#cce3de] p-1 rounded text-black text-center"
+                className="w-12 font-bold outline-none bg-[#cce3de] p-1 rounded text-black text-center"
               />
               <button 
                 onClick={() => removeItem(item.id)}

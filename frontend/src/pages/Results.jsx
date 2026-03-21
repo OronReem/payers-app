@@ -74,11 +74,6 @@ const Results = () => {
           ...record,
           createdAt: serverTimestamp()
         }).catch(err => console.error('Firestore save failed:', err));
-      } else {
-        // Guest: save to localStorage
-        const existing = JSON.parse(localStorage.getItem('payers_receipts') || '[]');
-        existing.unshift({ ...record, id: Date.now().toString() });
-        localStorage.setItem('payers_receipts', JSON.stringify(existing));
       }
     }
   }, [breakdowns, items, overallGrandTotal, currentUser]);

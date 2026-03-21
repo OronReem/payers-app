@@ -77,6 +77,13 @@ export const BillProvider = ({ children }) => {
     setItems([...items, { ...item, id: uuidv4(), assignedTo: [] }]);
   };
 
+  const resetSession = () => {
+    setParticipants([]);
+    setGlobalTipPercent(0);
+    setItems([]);
+    setImagePreview(null);
+  };
+
   return (
     <BillContext.Provider
       value={{
@@ -93,7 +100,8 @@ export const BillProvider = ({ children }) => {
         updateParticipant,
         toggleItemAssignment,
         updateItem,
-        addItem
+        addItem,
+        resetSession
       }}
     >
       {children}

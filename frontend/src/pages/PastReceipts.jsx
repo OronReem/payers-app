@@ -1,17 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronLeft, ReceiptText, Clock, Home, Trash2 } from 'lucide-react';
+import { ChevronLeft, ReceiptText, Clock, Home, Trash2, Pencil, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import HomeMenu from '../components/HomeMenu';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { collection, getDocs, deleteDoc, doc, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc, orderBy, query, updateDoc } from 'firebase/firestore';
 
 const PastReceipts = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [receipts, setReceipts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
+  const [editName, setEditName] = useState('');
+
+  const saveEventName = async (id) => {
+    if (!currentUser) return;
+    try {
+      await updateDoc(doc(db, 'users', currentUser.uid, 'receipts', id), {
+        eventName: editName
+      });
+      setReceipts(receipts.map(r => r.id === id ? { ...r, eventName: editName } : r));
+    } catch (err) {
+      console.error('Failed to update name', err);
+    }
+    setEditingId(null);
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -29,9 +44,7 @@ const PastReceipts = () => {
           console.error('Failed to load receipts from Firestore:', err);
         }
       } else {
-        // Guest: read from localStorage
-        const stored = JSON.parse(localStorage.getItem('payers_receipts') || '[]');
-        setReceipts(stored);
+        setReceipts([]);
       }
       setLoading(false);
     };
@@ -43,8 +56,6 @@ const PastReceipts = () => {
     setReceipts(updated);
     if (currentUser) {
       await deleteDoc(doc(db, 'users', currentUser.uid, 'receipts', id));
-    } else {
-      localStorage.setItem('payers_receipts', JSON.stringify(updated));
     }
   };
 
@@ -86,8 +97,32 @@ const PastReceipts = () => {
                   <div className="bg-[#a4c3b2] border border-black/10 p-2 rounded-xl">
                     <ReceiptText className="w-5 h-5 text-black" />
                   </div>
-                  <div>
-                    <div className="text-sm font-bold text-black">Table Split</div>
+                  <div className="flex-1">
+                    {editingId === r.id ? (
+                      <div className="flex items-center gap-1 mb-0.5 mt-0.5">
+                        <input 
+                          type="text" 
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          className="text-sm font-bold text-black border-2 border-pay-gray-dark outline-none bg-white rounded px-2 w-full max-w-[150px]"
+                          autoFocus
+                          onKeyDown={(e) => { if (e.key === 'Enter') saveEventName(r.id); }}
+                        />
+                        <button onClick={() => saveEventName(r.id)} className="p-1.5 hover:bg-[#a4c3b2] rounded bg-[#cce3de] transition shadow-sm ml-1">
+                          <Check className="w-4 h-4 text-black" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 group">
+                        <div className="text-sm font-bold text-black">{r.eventName || 'Table Split'}</div>
+                        <button 
+                          onClick={() => { setEditingId(r.id); setEditName(r.eventName || 'Table Split'); }}
+                          className="opacity-0 group-hover:opacity-100 p-1 hover:bg-[#a4c3b2] rounded transition flex items-center justify-center shrink-0"
+                        >
+                          <Pencil className="w-3.5 h-3.5 text-black" />
+                        </button>
+                      </div>
+                    )}
                     <div className="text-xs font-bold text-black opacity-80">
                       {(() => {
                         const d = r.date ? new Date(r.date) : (r.createdAt?.toDate ? r.createdAt.toDate() : new Date());

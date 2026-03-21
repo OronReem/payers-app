@@ -8,9 +8,14 @@ import { useBill } from '../context/BillContext';
 
 const Scanner = () => {
   const navigate = useNavigate();
-  const { loadParsedItems, setImagePreview } = useBill();
+  const { loadParsedItems, setImagePreview, resetSession } = useBill();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
+
+  // Clear previous session data when entering the scanner screen
+  useEffect(() => {
+    resetSession();
+  }, []);
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
