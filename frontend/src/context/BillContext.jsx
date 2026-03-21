@@ -81,6 +81,7 @@ export const BillProvider = ({ children }) => {
     <BillContext.Provider
       value={{
         items,
+        setItems,
         participants,
         globalTipPercent,
         imagePreview,

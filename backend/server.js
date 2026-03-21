@@ -34,7 +34,7 @@ app.post('/api/extract', upload.single('receipt'), async (req, res) => {
     }
 
     const { buffer } = req.file;
-    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
       You are an expert OCR and parsing system. Extract the items from this receipt image.

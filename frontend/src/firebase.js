@@ -23,6 +23,18 @@ const firebaseConfig = {
   appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+// Validate environment variables mapping
+const missingKeys = Object.entries(firebaseConfig)
+  .filter(([, value]) => !value)
+  .map(([key]) => key);
+
+if (missingKeys.length > 0) {
+  console.error(
+    `FIREBASE INIT ERROR: Missing ${missingKeys.length} environment variable(s) needed for Firebase:\n` +
+    missingKeys.map(k => `- ${k} (Check Vercel Environment Variables or local .env file)`).join('\n')
+  );
+}
+
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);

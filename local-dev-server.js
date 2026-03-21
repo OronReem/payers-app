@@ -1,4 +1,5 @@
-require('dotenv').config({ path: './frontend/.env.local' });
+require('dotenv').config({ path: './backend/.env' });         // loads GEMINI_API_KEY
+require('dotenv').config({ path: './frontend/.env.local' });  // loads VITE_ vars
 const http = require('http');
 const handler = require('./api/extract.js');
 
@@ -34,5 +35,5 @@ const server = http.createServer((req, res) => {
 const PORT = 5000;
 server.listen(PORT, () => {
   console.log(`Local API dev server running on port ${PORT}`);
-  console.log(`Loaded GEMINI_API_KEY from .env.local: ${!!process.env.VITE_FIREBASE_API_KEY}`);
+  console.log(`Loaded GEMINI_API_KEY: ${!!process.env.GEMINI_API_KEY}`);
 });

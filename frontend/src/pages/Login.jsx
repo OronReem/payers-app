@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, LogIn, ChevronLeft, User } from 'lucide-react';
+import { Lock, LogIn, ChevronLeft, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+
+// Firebase requires an email, so we derive one silently from the username.
+// Users never see or type an email — only their username and password.
+const toEmail = (username) => `${username.toLowerCase().replace(/\s+/g, '_')}@payers.local`;
 
 const Login = () => {
   const navigate = useNavigate();
   const { signup, login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
-  const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
@@ -17,20 +20,33 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!username.trim()) { setError('Please enter a username.'); return; }
+    if (password.length < 6) { setError('Password must be at least 6 characters.'); return; }
+
     setLoading(true);
     try {
+      const syntheticEmail = toEmail(username);
       if (isLogin) {
-        // Username login: we stored email alongside username in displayName,
-        // but for simplicity we ask for username+password and use email field.
-        // In a production app you'd look up the email by username in Firestore.
-        // For now, login mode asks username (used as email) and password.
-        await login(email, password);
+        await login(syntheticEmail, password);
       } else {
-        await signup(username, email, password);
+        await signup(username, syntheticEmail, password);
       }
       navigate('/scan');
     } catch (err) {
-      setError(err.message.replace('Firebase: ', '').replace(/\(auth\/.*\)\.?/, '').trim());
+      // Give friendly messages for the most common Firebase auth errors
+      const code = err.code || '';
+      if (code === 'auth/user-not-found' || code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        setError('Incorrect username or password.');
+      } else if (code === 'auth/email-already-in-use') {
+        setError('That username is already taken. Try a different one or log in.');
+      } else if (code === 'auth/weak-password') {
+        setError('Password must be at least 6 characters.');
+      } else if (code === 'auth/network-request-failed') {
+        setError('Network error. Check your connection and try again.');
+      } else {
+        setError(err.message.replace('Firebase: ', '').replace(/\(auth\/.*\)\.?/, '').trim() || 'Something went wrong.');
+      }
     } finally {
       setLoading(false);
     }
@@ -68,7 +84,7 @@ const Login = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Username — always shown */}
+          {/* Username */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <User className="w-5 h-5 text-black" />
@@ -79,47 +95,26 @@ const Login = () => {
               value={username}
               onChange={e => setUsername(e.target.value)}
               required
+              autoComplete="username"
               className="w-full pl-12 pr-4 py-4 bg-[#f0f7f4] border border-gray-200 rounded-2xl outline-none focus:border-[#a4c3b2] transition text-black"
             />
           </div>
 
-          {/* Password — always shown */}
+          {/* Password */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Lock className="w-5 h-5 text-black" />
             </div>
             <input 
               type="password"
-              placeholder="Password"
+              placeholder="Password (min. 6 characters)"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
+              autoComplete={isLogin ? 'current-password' : 'new-password'}
               className="w-full pl-12 pr-4 py-4 bg-[#f0f7f4] border border-gray-200 rounded-2xl outline-none focus:border-[#a4c3b2] transition text-black"
             />
           </div>
-
-          {/* Email — only for Sign Up */}
-          {!isLogin && (
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <Mail className="w-5 h-5 text-black" />
-              </div>
-              <input 
-                type="email"
-                placeholder="Email Address"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                className="w-full pl-12 pr-4 py-4 bg-[#f0f7f4] border border-gray-200 rounded-2xl outline-none focus:border-[#a4c3b2] transition text-black"
-              />
-            </div>
-          )}
-
-          {/* For login mode, use username as the email field 
-              (user types their email in the username box — we map it through) */}
-          {isLogin && (
-            <input type="hidden" value={username} onChange={() => setEmail(username)} />
-          )}
 
           <button 
             type="submit"
