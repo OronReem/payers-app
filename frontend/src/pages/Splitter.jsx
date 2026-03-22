@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useBill } from '../context/BillContext';
 import { useNavigate } from 'react-router-dom';
 import HomeMenu from '../components/HomeMenu';
-import { Users, Settings2, ArrowRight, Home } from 'lucide-react';
+import { Users, Settings2, ArrowRight, Home, Plus, Minus } from 'lucide-react';
 
 const Splitter = () => {
   const { 
@@ -16,9 +16,10 @@ const Splitter = () => {
   } = useBill();
   
   const navigate = useNavigate();
-  const [peopleCount, setPeopleCount] = useState('');
+  const [peopleCount, setPeopleCount] = useState('1'); // Default to 1
   const [activeParticipant, setActiveParticipant] = useState(null);
   const [customTip, setCustomTip] = useState('');
+  const [isCustomActive, setIsCustomActive] = useState(false);
 
   const handleGenerate = () => {
     const count = parseInt(peopleCount, 10);
@@ -29,10 +30,15 @@ const Splitter = () => {
   };
 
   const handleCustomTipChange = (e) => {
-    const val = e.target.value;
-    setCustomTip(val);
-    const num = parseFloat(val);
-    if (!isNaN(num)) setGlobalTipPercent(num);
+    setCustomTip(e.target.value);
+  };
+
+  const handleSetCustomTip = () => {
+    const num = parseFloat(customTip);
+    if (!isNaN(num)) {
+      setGlobalTipPercent(num);
+      setIsCustomActive(true);
+    }
   };
 
   // Generates a linear gradient across the entire row corresponding to selected participants
@@ -75,38 +81,55 @@ const Splitter = () => {
         
         {/* Number of People Setup */}
         <div className="flex items-center gap-2">
-          <div className="flex-1 flex items-center bg-[#cce3de] rounded-xl px-3 py-2">
-            <Users className="w-5 h-5 text-black mr-2" />
+          <div className="flex items-center bg-[#cce3de] rounded-xl px-2 py-2 w-[140px] shadow-inner">
+            <button 
+              onClick={() => {
+                const current = parseInt(peopleCount, 10) || 1;
+                if (current > 1) setPeopleCount((current - 1).toString());
+              }}
+              className="p-1.5 hover:bg-black/10 rounded-lg transition"
+            >
+              <Minus className="w-4 h-4 text-black" />
+            </button>
             <input 
               type="number" 
               min="1"
-              placeholder="How many people?" 
               value={peopleCount}
               onChange={(e) => setPeopleCount(e.target.value)}
-              className="bg-transparent outline-none w-full text-sm font-semibold"
+              className="bg-transparent outline-none w-10 text-center text-sm font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
+            <button 
+              onClick={() => {
+                const current = parseInt(peopleCount, 10) || 0;
+                setPeopleCount((current + 1).toString());
+              }}
+              className="p-1.5 hover:bg-black/10 rounded-lg transition"
+            >
+              <Plus className="w-4 h-4 text-black" />
+            </button>
           </div>
           <button 
             onClick={handleGenerate}
-            className="bg-[#f0f7f4] border-2 border-black text-black px-4 py-2 rounded-xl font-bold text-sm shadow-sm hover:bg-black transition"
+            className="flex-1 bg-[#f0f7f4] border-2 border-black text-black px-4 py-2.5 rounded-xl font-bold text-sm shadow-sm hover:bg-black hover:text-white transition"
           >
-            Set
+            Set People
           </button>
         </div>
 
         {/* Tip Config */}
         <div>
-          <label className="text-xs font-bold text-black uppercase tracking-wider mb-2 block">Global Tip</label>
-          <div className="flex gap-2">
-            {[10, 12, 15].map((tip) => (
+          <label className="text-[10px] font-black text-black/50 uppercase tracking-widest mb-2 block">Service Tip</label>
+          <div className="flex flex-wrap gap-2">
+            {[0, 10, 12, 15].map((tip) => (
               <button 
                 key={tip}
                 onClick={() => {
                   setGlobalTipPercent(tip);
                   setCustomTip('');
+                  setIsCustomActive(false);
                 }}
-                className={`py-2 px-3 rounded-xl text-sm font-bold transition flex-1 ${
-                  globalTipPercent === tip && customTip === ''
+                className={`py-2 px-3 rounded-xl text-sm font-bold transition min-w-[50px] ${
+                  globalTipPercent === tip && !isCustomActive
                     ? 'bg-[#a4c3b2] border border-black text-black shadow-md' 
                     : 'bg-[#cce3de] text-black hover:bg-[#a4c3b2]'
                 }`}
@@ -114,18 +137,30 @@ const Splitter = () => {
                 {tip}%
               </button>
             ))}
-            <div className="flex-1 relative">
-              <input 
-                type="number"
-                placeholder="Custom %"
-                value={customTip}
-                onChange={handleCustomTipChange}
-                className={`w-full py-2 px-2 text-center rounded-xl text-sm font-bold border-2 outline-none transition ${
-                  customTip !== '' 
-                    ? 'border-pay-blue text-black bg-blue-50' 
-                    : 'border-transparent bg-[#cce3de] text-black focus:border-gray-300'
+            <div className="flex flex-1 items-center gap-1 min-w-[120px]">
+              <div className="relative flex-1">
+                <input 
+                  type="number"
+                  placeholder="Custom"
+                  value={customTip}
+                  onChange={handleCustomTipChange}
+                  className={`w-full py-2 px-2 text-center rounded-xl text-sm font-bold border-2 outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                    isCustomActive 
+                      ? 'border-[#a4c3b2] bg-white text-black' 
+                      : 'border-transparent bg-[#cce3de] text-black focus:border-[#a4c3b2]/50'
+                  }`}
+                />
+              </div>
+              <button
+                onClick={handleSetCustomTip}
+                className={`px-3 py-2 rounded-xl font-bold text-xs transition border ${
+                  isCustomActive 
+                    ? 'bg-[#a4c3b2] border-black text-black' 
+                    : 'bg-[#f0f7f4] border-black/20 text-black/60 hover:border-black'
                 }`}
-              />
+              >
+                Set
+              </button>
             </div>
           </div>
         </div>
