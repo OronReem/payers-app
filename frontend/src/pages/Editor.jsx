@@ -74,21 +74,21 @@ const Editor = () => {
                 type="text" 
                 value={item.name} 
                 onChange={(e) => updateItem(item.id, { name: e.target.value })}
-                className="font-bold text-black border-none bg-transparent outline-none flex-1 min-w-0"
+                className="font-bold text-black bg-white border border-[#a4c3b2] rounded px-2 py-1 outline-none flex-1 min-w-0 shadow-sm transition focus:border-gray-500"
               />
               <input 
                 type="number" 
                 step="0.01"
                 value={item.price}
                 onChange={(e) => handlePriceChange(item.id, e.target.value)}
-                className="w-20 font-bold outline-none bg-[#cce3de] p-1 rounded text-black text-center"
+                className="w-20 font-bold outline-none bg-white border border-[#a4c3b2] rounded px-1 py-1 text-black text-center shadow-sm transition focus:border-gray-500"
               />
               <input 
                 type="number" 
                 min="1"
                 value={item.qty}
                 onChange={(e) => handleQtyChange(item.id, e.target.value)}
-                className="w-12 font-bold outline-none bg-[#cce3de] p-1 rounded text-black text-center"
+                className="w-12 font-bold outline-none bg-white border border-[#a4c3b2] rounded px-1 py-1 text-black text-center shadow-sm transition focus:border-gray-500"
               />
               <button 
                 onClick={() => removeItem(item.id)}

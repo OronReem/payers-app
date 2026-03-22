@@ -2,9 +2,11 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { ReceiptText, User, ArrowRight } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
 
   return (
     <motion.div 
@@ -28,8 +30,9 @@ const Home = () => {
 
         {/* Secondary Action - Guest Mode */}
         <button 
-          onClick={() => {
+          onClick={async () => {
             localStorage.removeItem('isLoggedIn');
+            await logout();
             navigate('/scan');
           }}
           className="w-64 flex items-center justify-center gap-2 text-black bg-transparent border border-black/30 py-2.5 px-4 rounded-xl font-medium text-sm hover:bg-black/5 transition"

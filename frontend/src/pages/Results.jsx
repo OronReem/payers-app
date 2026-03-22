@@ -124,24 +124,22 @@ const Results = () => {
                       type="text" 
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="text-sm font-bold text-black border-2 border-pay-gray-dark outline-none bg-white rounded px-2 w-full max-w-[150px]"
+                      className="text-lg font-bold text-black border-2 border-[#a4c3b2] outline-none bg-white rounded px-2 py-0.5 w-full max-w-[150px] shadow-sm"
                       autoFocus
                       onKeyDown={(e) => { if (e.key === 'Enter') handleSaveName(person.id); }}
                     />
-                    <button onClick={() => handleSaveName(person.id)} className="p-1 hover:bg-[#a4c3b2] rounded bg-[#cce3de] transition shadow-sm ml-1">
+                    <button onClick={() => handleSaveName(person.id)} className="p-2 hover:bg-[#a4c3b2] rounded bg-[#cce3de] transition shadow-sm ml-1">
                       <Check className="w-4 h-4 text-black" />
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 group">
-                    <h3 className="font-bold text-lg text-black">{person.name}</h3>
-                    <button 
-                      onClick={() => { setEditingParticipantId(person.id); setEditName(person.name); }}
-                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-[#a4c3b2] rounded transition flex items-center justify-center shrink-0"
-                    >
-                      <Pencil className="w-4 h-4 text-black" />
-                    </button>
-                  </div>
+                  <button 
+                    onClick={() => { setEditingParticipantId(person.id); setEditName(person.name); }}
+                    className="flex items-center gap-2 px-3 py-1 min-w-[120px] bg-white border border-[#a4c3b2] rounded-lg shadow-sm hover:bg-[#f0f7f4] transition text-left"
+                  >
+                    <span className="font-bold text-lg text-black truncate">{person.name}</span>
+                    <Pencil className="w-4 h-4 text-black opacity-60 ml-auto shrink-0" />
+                  </button>
                 )}
               </div>
               <span className="text-lg font-black text-black ml-2">{person.grandTotal.toFixed(0)}</span>
