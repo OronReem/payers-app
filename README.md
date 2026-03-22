@@ -1,70 +1,85 @@
-# PAYERS - Receipt Splitter App
+# P A Y E R S
 
-PAYERS is a full-stack Progressive Web App (PWA) designed to help groups of people easily split receipts and bills. It utilizes AI to automatically read and extract line items and prices from a receipt photo, allowing users to assign specific items to different participants and visually track the cost split.
+**P A Y E R S** is a mobile-first Progressive Web App (PWA) that simplifies splitting group expenses using AI-powered receipt scanning. By leveraging Google's Gemini API, it automatically parses items and prices, allowing for precise and visual cost allocation among participants.
 
-## Features
-- **AI Receipt Scanning**: Upload a photo of a receipt, and the backend uses Google's Gemini API to automatically extract line items and prices.
-- **Interactive Splitter UI**: Add participants with uniquely assigned color themes.
-- **Visual Breakdown**: A dynamic pie chart displays exactly how much each person owes based on the items assigned to them.
-- **Modern UI/UX**: Designed with a mobile-first premium aesthetic, utilizing smooth transitions and micro-animations.
+## Key Features
 
-## Technology Stack
+*   **⚡ AI-Powered Extraction**: Instantly transform receipt photos into editable digital item lists using Google Gemini.
+*   **🎨 Participant Mapping**: Assign unique color-coded themes to participants for clear visual identification.
+*   **📊 Real-time Breakdown**: A dynamic, interactive breakdown shows exactly what each person owes as you assign items.
+*   **💾 Persistent Storage**: Securely sync your bills and user profile across devices using Firebase.
+*   **🌐 PWA Ready**: Installable on iOS and Android for a native-like app experience.
+*   **🛡️ Guest Mode**: Try out the core functionality without needing to create an account.
+
+## Tech Stack
 
 ### Frontend
-- **Framework**: React 19 (via Vite)
-- **Styling**: TailwindCSS & custom Vanilla CSS
+- **Framework**: React 19
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS & Custom CSS
 - **Animations**: Framer Motion
 - **Icons**: Lucide React
-- **Routing**: React Router DOM
+- **PWA**: `vite-plugin-pwa`
 
-### Backend
-- **Environment**: Node.js & Express
-- **AI Integration**: `@google/generative-ai` (Gemini API)
-- **Uploads Handling**: `multer`
+### Backend & Infrastructure
+- **Hosting**: Vercel
+- **Serverless**: Vercel Functions (Node.js)
+- **AI**: Google Gemini API
+- **Database/Auth**: Firebase (Firestore & Authentication)
 
 ## Getting Started
 
 ### Prerequisites
-- Node.js installed on your machine.
-- A Gemini API Key from Google AI Studio.
+- Node.js (v18+)
+- A Google AI Studio API Key
+- A Firebase Project (Firestore + Auth enabled)
 
-### 1. Setting Up the Backend
-1. Open a terminal and navigate to the `backend` directory:
-   ```bash
-   cd backend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file in the `backend` directory and add your Gemini API Key:
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key_here
-   ```
-4. Start the backend development server:
-   ```bash
-   npm run dev
-   ```
-   *(The backend server will run on http://localhost:5000)*
+### Local Development
 
-### 2. Setting Up the Frontend
-1. Open a **new** terminal window and navigate to the `frontend` directory:
-   ```bash
-   cd frontend
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the frontend development server:
-   ```bash
-   npm run dev
-   ```
-   *(The frontend server will run on http://localhost:5173)*
+1.  **Clone & Install**:
+    ```bash
+    git clone https://github.com/yourusername/payers.git
+    cd payers
+    cd frontend && npm install
+    ```
 
-## Usage Flow
-1. Open the application locally at `http://localhost:5173`.
-2. Go to the **Verify Receipt** page to upload a photo of your receipt.
-3. The backend AI will extract the items and return them to the frontend.
-4. On the **Splitter** page, you can assign these items to different participants by selecting an item and then picking the participant who pays for it.
-5. The Pie Chart updates in real time to show the breakdown of the bill.
+2.  **Environment Setup**:
+    Create `frontend/.env.local` with your Firebase credentials:
+    ```env
+    VITE_FIREBASE_API_KEY=your_key
+    VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+    VITE_FIREBASE_PROJECT_ID=your_project_id
+    VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+    VITE_FIREBASE_MESSAGING_SENDER_ID=your_id
+    VITE_FIREBASE_APP_ID=your_app_id
+    ```
+
+    Create `.env` at the root for the serverless API:
+    ```env
+    GEMINI_API_KEY=your_gemini_api_key
+    ```
+
+3.  **Run Development Server**:
+    ```bash
+    # From the project root
+    npm run dev  # (If you have a root script) or 'cd frontend && npm run dev'
+    ```
+
+4.  **Backend (Optional)**:
+    To test the Gemini extraction locally:
+    ```bash
+    npm i -g vercel
+    vercel dev
+    ```
+
+## Application Flow
+
+1.  **Dashboard**: Start a new session or view past receipts.
+2.  **Scanner**: Capture or upload a receipt image.
+3.  **Editor**: Review and adjust the AI-extracted items for 100% accuracy.
+4.  **Splitter**: Add participants and tap items to assign them to specific people.
+5.  **Results**: View the final balance and sharing details.
+
+---
+
+*Built with precision for easy group payments.*
