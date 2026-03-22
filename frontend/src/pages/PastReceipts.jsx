@@ -28,6 +28,8 @@ const PastReceipts = () => {
     setEditingId(null);
   };
 
+  const { isGuest } = useBill();
+
   useEffect(() => {
     const load = async () => {
       if (currentUser) {
@@ -81,6 +83,25 @@ const PastReceipts = () => {
           <div className="flex flex-col items-center justify-center mt-20 space-y-3">
             <Clock className="w-8 h-8 animate-spin text-black" />
             <p className="text-black font-medium">Fetching History...</p>
+          </div>
+        ) : isGuest ? (
+          <div className="flex flex-col items-center justify-center mt-20 text-center space-y-6 px-6">
+            <div className="bg-[#cce3de] w-20 h-20 rounded-full flex items-center justify-center shadow-sm">
+              <Clock className="w-10 h-10 text-black/40" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-black mb-2">History is for members</h3>
+              <p className="text-black text-sm font-medium opacity-70">
+                Guests can split bills on the spot, but your history won't be saved. 
+                Log in to keep a record of all your past meals!
+              </p>
+            </div>
+            <button 
+              onClick={() => navigate('/login')}
+              className="bg-black text-[#e0f0ea] py-3 px-8 rounded-2xl font-bold text-sm shadow-md hover:bg-gray-800 transition"
+            >
+              Log In / Sign Up
+            </button>
           </div>
         ) : receipts.length === 0 ? (
           <div className="text-center text-black mt-20 font-medium">

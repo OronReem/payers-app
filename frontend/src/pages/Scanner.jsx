@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 
 const Scanner = () => {
   const navigate = useNavigate();
-  const { loadParsedItems, setImagePreview, resetSession } = useBill();
+  const { loadParsedItems, setImagePreview, resetSession, isGuest } = useBill();
   const { currentUser } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
@@ -99,7 +99,14 @@ const Scanner = () => {
           </button>
           <h2 className="text-xl font-bold ml-2 text-black">Scan Receipt</h2>
         </div>
-        <HomeMenu />
+        <div className="flex items-center gap-2">
+          {isGuest && (
+            <span className="bg-black/10 text-black text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-tighter">
+              Guest Mode
+            </span>
+          )}
+          <HomeMenu />
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center p-6 space-y-6">

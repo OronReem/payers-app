@@ -1,9 +1,13 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useAuth } from './AuthContext';
 
 const BillContext = createContext();
 
 export const BillProvider = ({ children }) => {
+  const { currentUser } = useAuth();
+  const isGuest = !currentUser;
+
   // Global State
   const [items, setItems] = useState([]);
   const [participants, setParticipants] = useState([]);
@@ -106,7 +110,8 @@ export const BillProvider = ({ children }) => {
         addItem,
         resetSession,
         currentReceiptId,
-        setCurrentReceiptId
+        setCurrentReceiptId,
+        isGuest
       }}
     >
       {children}

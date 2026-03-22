@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Lock, LogIn, ChevronLeft, User } from 'lucide-react';
+import { Lock, LogIn, ChevronLeft, User, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 // Firebase requires an email, so we derive one silently from the username.
@@ -14,6 +14,7 @@ const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
 
@@ -106,14 +107,21 @@ const Login = () => {
               <Lock className="w-5 h-5 text-black" />
             </div>
             <input 
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Password (min. 6 characters)"
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
               autoComplete={isLogin ? 'current-password' : 'new-password'}
-              className="w-full pl-12 pr-4 py-4 bg-[#f0f7f4] border border-gray-200 rounded-2xl outline-none focus:border-[#a4c3b2] transition text-black"
+              className="w-full pl-12 pr-12 py-4 bg-[#f0f7f4] border border-gray-200 rounded-2xl outline-none focus:border-[#a4c3b2] transition text-black"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 pr-4 flex items-center text-black hover:text-[#a4c3b2] transition"
+            >
+              {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
           </div>
 
           <button 
@@ -130,7 +138,7 @@ const Login = () => {
           <p className="text-black text-sm">
             {isLogin ? "Don't have an account?" : "Already have an account?"}
             <button 
-              onClick={() => { setIsLogin(!isLogin); setError(''); }}
+              onClick={() => { setIsLogin(!isLogin); setError(''); setShowPassword(false); }}
               className="ml-2 font-bold text-black underline"
             >
               {isLogin ? 'Sign Up' : 'Log In'}

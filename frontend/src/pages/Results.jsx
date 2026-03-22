@@ -9,7 +9,7 @@ import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
 
 const Results = () => {
-  const { items, participants, globalTipPercent, updateParticipant, currentReceiptId, setCurrentReceiptId } = useBill();
+  const { items, participants, globalTipPercent, updateParticipant, currentReceiptId, setCurrentReceiptId, isGuest } = useBill();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [editingParticipantId, setEditingParticipantId] = useState(null);
@@ -61,6 +61,9 @@ const Results = () => {
   const { breakdowns, overallSubtotal, overallTip, overallGrandTotal } = calculateResults();
 
   useEffect(() => {
+    // Guest Mode: Do not save anything to Firestore
+    if (isGuest) return;
+
     // Attempt Firestore update/save only if we have participants and we're logged in
     if (breakdowns.length > 0 && currentUser) {
       const record = {
@@ -118,7 +121,14 @@ const Results = () => {
           <PartyPopper className="w-8 h-8 text-black" />
           <h2 className="text-2xl font-extrabold text-black">Final Results</h2>
         </div>
-        <HomeMenu />
+        <div className="flex items-center gap-2">
+          {isGuest && (
+            <span className="bg-black/10 text-black text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-tighter">
+              Guest Mode
+            </span>
+          )}
+          <HomeMenu />
+        </div>
       </div>
 
       <div className="space-y-3 mb-8">
