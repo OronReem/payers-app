@@ -132,7 +132,7 @@ const PastReceipts = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="font-black text-xl text-black">{r.overallGrandTotal?.toFixed(0)}</span>
+                  <span className="font-black text-xl text-black">{r.overallGrandTotal?.toFixed(2)}</span>
                   <button onClick={() => handleDelete(r.id)} className="p-2 text-black hover:bg-black/10 rounded-lg transition">
                     <Trash2 className="w-5 h-5" />
                   </button>
@@ -145,7 +145,7 @@ const PastReceipts = () => {
                   {r.participants?.map(p => (
                     <div key={p.id} className="flex items-center gap-1.5 bg-[#e0f0ea] px-2.5 py-1 rounded-lg border border-gray-100">
                       <div className="w-3 h-3 rounded-full" style={{backgroundColor: p.color}}></div>
-                      <span className="text-xs font-bold text-black">{p.name} <span className="opacity-80 ml-1 font-bold">{p.grandTotal?.toFixed(0)}</span></span>
+                      <span className="text-xs font-bold text-black">{p.name} <span className="opacity-80 ml-1 font-bold">{p.grandTotal?.toFixed(2)}</span></span>
                     </div>
                   ))}
                 </div>

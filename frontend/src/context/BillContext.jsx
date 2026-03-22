@@ -10,6 +10,7 @@ export const BillProvider = ({ children }) => {
   const [globalTipPercent, setGlobalTipPercent] = useState(0);
 
   const [imagePreview, setImagePreview] = useState(null);
+  const [currentReceiptId, setCurrentReceiptId] = useState(null);
 
   // Available vibrant colors for participants (strictly vivid HTML Hex codes to avoid black/white/gray and Tailwind pruning)
   const availableColors = [
@@ -82,6 +83,7 @@ export const BillProvider = ({ children }) => {
     setGlobalTipPercent(0);
     setItems([]);
     setImagePreview(null);
+    setCurrentReceiptId(null);
   };
 
   return (
@@ -101,7 +103,10 @@ export const BillProvider = ({ children }) => {
         toggleItemAssignment,
         updateItem,
         addItem,
-        resetSession
+        addItem,
+        resetSession,
+        currentReceiptId,
+        setCurrentReceiptId
       }}
     >
       {children}

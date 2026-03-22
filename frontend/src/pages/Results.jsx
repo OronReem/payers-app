@@ -6,12 +6,11 @@ import { useNavigate } from 'react-router-dom';
 import HomeMenu from '../components/HomeMenu';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
 
 const Results = () => {
-  const { items, participants, globalTipPercent, updateParticipant } = useBill();
+  const { items, participants, globalTipPercent, updateParticipant, currentReceiptId, setCurrentReceiptId } = useBill();
   const navigate = useNavigate();
-  const hasSaved = useRef(false);
   const { currentUser } = useAuth();
   const [editingParticipantId, setEditingParticipantId] = useState(null);
   const [editName, setEditName] = useState('');
@@ -47,7 +46,7 @@ const Results = () => {
 
     Object.values(totals).forEach(p => {
       p.tipShare = p.subtotal * tipMultiplier;
-      p.grandTotal = Math.ceil(p.subtotal + p.tipShare);
+      p.grandTotal = p.subtotal + p.tipShare;
       grandTotal += p.grandTotal;
     });
 
@@ -62,23 +61,33 @@ const Results = () => {
   const { breakdowns, overallSubtotal, overallTip, overallGrandTotal } = calculateResults();
 
   useEffect(() => {
-    if (!hasSaved.current && breakdowns.length > 0) {
-      hasSaved.current = true;
+    // Attempt Firestore update/save only if we have participants and we're logged in
+    if (breakdowns.length > 0 && currentUser) {
       const record = {
         date: new Date().toISOString(),
         overallGrandTotal,
         participants: breakdowns,
-        items
+        items,
+        updatedAt: serverTimestamp()
       };
-      if (currentUser) {
-        // Logged-in user: save to Firestore under their UID
+
+      if (currentReceiptId) {
+        // Update existing document
+        updateDoc(doc(db, 'users', currentUser.uid, 'receipts', currentReceiptId), record)
+          .catch(err => console.error('Firestore update failed:', err));
+      } else {
+        // Create new document
         addDoc(collection(db, 'users', currentUser.uid, 'receipts'), {
           ...record,
           createdAt: serverTimestamp()
-        }).catch(err => console.error('Firestore save failed:', err));
+        })
+        .then(docRef => {
+          setCurrentReceiptId(docRef.id);
+        })
+        .catch(err => console.error('Firestore save failed:', err));
       }
     }
-  }, [breakdowns, items, overallGrandTotal, currentUser]);
+  }, [breakdowns, items, overallGrandTotal, currentUser, currentReceiptId, setCurrentReceiptId]);
 
   const handleCopySummary = () => {
     let text = "🍽️ PAYERS Breakdown\n\n";
@@ -142,7 +151,7 @@ const Results = () => {
                   </button>
                 )}
               </div>
-              <span className="text-lg font-black text-black ml-2">{person.grandTotal.toFixed(0)}</span>
+              <span className="text-lg font-black text-black ml-2">{person.grandTotal.toFixed(2)}</span>
             </div>
             
             <div className="space-y-1 pl-2">
