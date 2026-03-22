@@ -187,7 +187,7 @@ const Results = () => {
             <span>{overallSubtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between text-black font-medium">
-            <span>Total Tip</span>
+            <span>Total Tip ({globalTipPercent}%)</span>
             <span>{overallTip.toFixed(2)}</span>
           </div>
           <div className="border-t border-gray-700 pt-3 mt-3 flex justify-between font-bold text-xl">

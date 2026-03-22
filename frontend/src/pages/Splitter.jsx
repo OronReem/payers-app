@@ -29,15 +29,35 @@ const Splitter = () => {
     }
   };
 
-  const handleCustomTipChange = (e) => {
-    setCustomTip(e.target.value);
+  React.useEffect(() => {
+    if (participants.length === 0) {
+      generateParticipants(1);
+    }
+  }, []);
+
+  const handlePeopleCountChange = (val) => {
+    // Basic number check
+    if (val === '') {
+      setPeopleCount('');
+      return;
+    }
+    const count = parseInt(val, 10);
+    if (!isNaN(count)) {
+      const safeCount = Math.max(1, count);
+      setPeopleCount(safeCount.toString());
+      generateParticipants(safeCount);
+    }
   };
 
-  const handleSetCustomTip = () => {
-    const num = parseFloat(customTip);
+  const handleCustomTipChange = (e) => {
+    const val = e.target.value;
+    setCustomTip(val);
+    const num = parseFloat(val);
     if (!isNaN(num)) {
       setGlobalTipPercent(num);
       setIsCustomActive(true);
+    } else {
+      setIsCustomActive(false);
     }
   };
 
@@ -79,44 +99,7 @@ const Splitter = () => {
           <HomeMenu />
         </div>
         
-        {/* Number of People Setup */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center bg-[#cce3de] rounded-xl px-2 py-2 w-[140px] shadow-inner">
-            <button 
-              onClick={() => {
-                const current = parseInt(peopleCount, 10) || 1;
-                if (current > 1) setPeopleCount((current - 1).toString());
-              }}
-              className="p-1.5 hover:bg-black/10 rounded-lg transition"
-            >
-              <Minus className="w-4 h-4 text-black" />
-            </button>
-            <input 
-              type="number" 
-              min="1"
-              value={peopleCount}
-              onChange={(e) => setPeopleCount(e.target.value)}
-              className="bg-transparent outline-none w-10 text-center text-sm font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-            />
-            <button 
-              onClick={() => {
-                const current = parseInt(peopleCount, 10) || 0;
-                setPeopleCount((current + 1).toString());
-              }}
-              className="p-1.5 hover:bg-black/10 rounded-lg transition"
-            >
-              <Plus className="w-4 h-4 text-black" />
-            </button>
-          </div>
-          <button 
-            onClick={handleGenerate}
-            className="flex-1 bg-[#f0f7f4] border-2 border-black text-black px-4 py-2.5 rounded-xl font-bold text-sm shadow-sm hover:bg-black hover:text-white transition"
-          >
-            Set People
-          </button>
-        </div>
-
-        {/* Tip Config */}
+        {/* Tip Config - Moved Up */}
         <div>
           <label className="text-[10px] font-black text-black/50 uppercase tracking-widest mb-2 block">Service Tip</label>
           <div className="flex flex-wrap gap-2">
@@ -128,7 +111,7 @@ const Splitter = () => {
                   setCustomTip('');
                   setIsCustomActive(false);
                 }}
-                className={`py-2 px-3 rounded-xl text-sm font-bold transition min-w-[50px] ${
+                className={`flex-1 py-2 px-3 rounded-xl text-sm font-bold transition min-w-[50px] ${
                   globalTipPercent === tip && !isCustomActive
                     ? 'bg-[#a4c3b2] border border-black text-black shadow-md' 
                     : 'bg-[#cce3de] text-black hover:bg-[#a4c3b2]'
@@ -137,31 +120,58 @@ const Splitter = () => {
                 {tip}%
               </button>
             ))}
-            <div className="flex flex-1 items-center gap-1 min-w-[120px]">
-              <div className="relative flex-1">
-                <input 
-                  type="number"
-                  placeholder="Custom"
-                  value={customTip}
-                  onChange={handleCustomTipChange}
-                  className={`w-full py-2 px-2 text-center rounded-xl text-sm font-bold border-2 outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
-                    isCustomActive 
-                      ? 'border-[#a4c3b2] bg-white text-black' 
-                      : 'border-transparent bg-[#cce3de] text-black focus:border-[#a4c3b2]/50'
-                  }`}
-                />
-              </div>
-              <button
-                onClick={handleSetCustomTip}
-                className={`px-3 py-2 rounded-xl font-bold text-xs transition border ${
+            <div className="flex-[0.6] flex items-center gap-1 min-w-[80px]">
+              <input 
+                type="number"
+                placeholder="Custom"
+                value={customTip}
+                onChange={handleCustomTipChange}
+                className={`w-full py-2 px-1 text-center rounded-xl text-sm font-bold border-2 outline-none transition [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
                   isCustomActive 
-                    ? 'bg-[#a4c3b2] border-black text-black' 
-                    : 'bg-[#f0f7f4] border-black/20 text-black/60 hover:border-black'
+                    ? 'bg-[#a4c3b2] border-black text-black shadow-md' 
+                    : 'border-transparent bg-[#cce3de] text-black focus:border-[#a4c3b2]/50'
                 }`}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Number of People Setup - Moved Down */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex-1">
+             <label className="text-[10px] font-black text-black/50 uppercase tracking-widest mb-1.5 block">N. People</label>
+             <div className="flex items-center bg-[#cce3de] rounded-xl px-2 py-2 w-full shadow-inner">
+              <button 
+                onClick={() => {
+                  const current = parseInt(peopleCount, 10) || 1;
+                  handlePeopleCountChange(Math.max(1, current - 1).toString());
+                }}
+                className="p-1.5 hover:bg-black/10 rounded-lg transition"
               >
-                Set
+                <Minus className="w-4 h-4 text-black" />
+              </button>
+              <input 
+                type="number" 
+                min="1"
+                value={peopleCount}
+                onChange={(e) => handlePeopleCountChange(e.target.value)}
+                className="bg-transparent outline-none flex-1 text-center text-sm font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+              <button 
+                onClick={() => {
+                  const current = parseInt(peopleCount, 10) || 0;
+                  handlePeopleCountChange((current + 1).toString());
+                }}
+                className="p-1.5 hover:bg-black/10 rounded-lg transition"
+              >
+                <Plus className="w-4 h-4 text-black" />
               </button>
             </div>
+          </div>
+          <div className="flex-1 pt-5">
+            <p className="text-[10px] font-bold text-black/40 italic leading-tight">
+              Table updates instantly as you change values
+            </p>
           </div>
         </div>
 
