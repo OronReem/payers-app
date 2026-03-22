@@ -6,7 +6,10 @@ import { useAuth } from '../context/AuthContext';
 
 // Firebase requires an email, so we derive one silently from the username.
 // Users never see or type an email — only their username and password.
-const toEmail = (username) => `${username.toLowerCase().replace(/\s+/g, '_')}@payers.local`;
+const toEmail = (username) => {
+  if (username.includes('@')) return username.toLowerCase();
+  return `${username.toLowerCase().replace(/\s+/g, '_')}@payers.local`;
+};
 
 const Login = () => {
   const navigate = useNavigate();
@@ -92,7 +95,7 @@ const Login = () => {
             </div>
             <input 
               type="text"
-              placeholder="Username"
+              placeholder="Username or Email"
               value={username}
               onChange={e => setUsername(e.target.value)}
               required
