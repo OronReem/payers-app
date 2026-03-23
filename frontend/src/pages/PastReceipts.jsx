@@ -4,6 +4,7 @@ import { ChevronLeft, ReceiptText, Clock, Home, Trash2, Pencil, Check } from 'lu
 import { useNavigate } from 'react-router-dom';
 import HomeMenu from '../components/HomeMenu';
 import { useAuth } from '../context/AuthContext';
+import { useBill } from '../context/BillContext';
 import { db } from '../firebase';
 import { collection, getDocs, deleteDoc, doc, orderBy, query, updateDoc } from 'firebase/firestore';
 
