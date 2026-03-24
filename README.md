@@ -4,12 +4,12 @@
 
 ## Key Features
 
-*   **⚡ AI-Powered Extraction**: Instantly transform receipt photos into editable digital item lists using Google Gemini.
-*   **🎨 Participant Mapping**: Assign unique color-coded themes to participants for clear visual identification.
-*   **📊 Real-time Breakdown**: A dynamic, interactive breakdown shows exactly what each person owes as you assign items.
-*   **💾 Persistent Storage**: Securely sync your bills and user profile across devices using Firebase.
-*   **🌐 PWA Ready**: Installable on iOS and Android for a native-like app experience.
-*   **🛡️ Guest Mode**: Try out the core functionality without needing to create an account.
+*   ** AI-Powered Extraction**: Instantly transform receipt photos into editable digital item lists using Google Gemini.
+*   ** Participant Mapping**: Assign unique color-coded themes to participants for clear visual identification.
+*   ** Real-time Breakdown**: A dynamic, interactive breakdown shows exactly what each person owes as you assign items.
+*   ** Persistent Storage**: Securely sync your bills and user profile across devices using Firebase.
+*   ** PWA Ready**: Installable on iOS and Android for a native-like app experience.
+*   ** Guest Mode**: Try out the core functionality without needing to create an account.
 
 ## Tech Stack
 
